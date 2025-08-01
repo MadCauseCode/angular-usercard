@@ -1,0 +1,145 @@
+<!-- HEADER -->
+<header class="app-header">
+  <div class="header-content">
+    <span style="color: black;">Search user :</span>
+    <input type="text" #search (input)="searchUser(search.value)" />
+    <button (click)="toggleAddUser()">
+      {{ addingUserState ? 'Cancel' : 'Add User' }}
+    </button>
+  </div>
+</header>
+
+
+<br /><br />
+
+<!-- User Card Wrapper -->
+<div style="display: flex; align-items: flex-start; gap: 40px;">
+
+  <div style="display: flex; flex-direction: column; gap: 16px;">
+    @for (user of users; track user._id) {
+    <div class="user-container">
+
+      <!-- User Card -->
+      <div
+        class="user-card"
+        [ngClass]="{
+          'green-border': allTasksCompleted(user),
+          'red-border': !allTasksCompleted(user),
+          'selected': selectedUserId === user._id
+        }"
+        (click)="selectUser(user._id)"
+      >
+        <label>Name:</label>
+        <input type="text" #nameInput [value]="user.name" /><br />
+        <label>Email:</label>
+        <input type="text" #emailInput [value]="user.email" /><br /><br />
+
+        @if (showExtraDataUserId === user._id) {
+        <div class="address-box">
+          <label>Street:</label>
+          <input type="text" #streetInput [value]="user.address?.street || ''" /><br />
+          <label>City:</label>
+          <input type="text" #cityInput [value]="user.address?.city || ''" /><br />
+          <label>Zipcode:</label>
+          <input type="number" #zipInput [value]="user.address?.zipcode || 0" /><br /><br />
+        </div>
+        }
+
+        <div class="button-group">
+          <button class="gray-btn" (click)="otherData(user._id)">Other Data</button>
+          <button
+            class="yellow-btn"
+            (click)="updateUser(user, nameInput.value, emailInput.value, user.address?.street || '', user.address?.city || '', user.address?.zipcode || 0)"
+          >
+            Update
+          </button>
+          <button class="red-btn" (click)="deleteUser(user._id)">Delete</button>
+        </div>
+      </div>
+
+      <!-- Posts + Todos -->
+      @if (selectedUserId === user._id) {
+      <div class="todoPost-wrapper">
+        <!-- Todos -->
+        <div class="todoPost-panel">
+          <strong>Todos: {{ user.name }}</strong>
+          <button class="yellow-btn" (click)="addingTaskUserId = user._id">Add</button>
+
+          @if (addingTaskUserId === user._id && !addingUserState) {
+          <div class="todoPost-item">
+            <input type="text" [(ngModel)]="newTaskTitle" placeholder="New task title" />
+            <br /><br />
+            <button class="yellow-btn" (click)="addTask(user)">Save</button>
+            <button class="gray-btn" (click)="addingTaskUserId = null">Cancel</button>
+          </div>
+          } @else {
+          <div class="todoPost-box">
+            @for (task of user.tasks; track task.id) {
+            <div class="todoPost-item">
+              Title: {{ task.title }} <br />
+              Completed:
+              <span [style.color]="task.completed ? 'green' : 'red'">
+                {{ task.completed ? 'True' : 'False' }}
+              </span>
+              @if (!task.completed) {
+              <button class="yellow-btn" (click)="completeTask(user, task.id)">
+                Complete Task
+              </button>
+              }
+            </div>
+            }
+          </div>
+          }
+        </div>
+
+        <!-- Posts -->
+        <br />
+        <div class="todoPost-panel">
+          <strong>Posts: {{ user.name }}</strong>
+          <button class="yellow-btn" (click)="addingPostUserId = user._id">Add</button>
+
+          @if (addingPostUserId === user._id && !addingUserState) {
+          <div class="todoPost-item">
+            <input type="text" [(ngModel)]="newPostTitle" placeholder="New post title" />
+            <br /><br />
+            <input type="text" [(ngModel)]="newPostBody" placeholder="New post body" />
+            <br /><br />
+            <button class="yellow-btn" (click)="addPost(user)">Save</button>
+            <button class="gray-btn" (click)="addingPostUserId = null">Cancel</button>
+          </div>
+          } @else {
+          <div class="todoPost-box">
+            @for (post of user.posts; track post.id) {
+            <div class="todoPost-item">
+              Title: {{ post.title }} <br />
+              Body: {{ post.body }} <br />
+            </div>
+            }
+          </div>
+          }
+        </div>
+      </div>
+      }
+    </div>
+    }
+  </div>
+
+  <!-- Add User Form -->
+  @if (addingUserState) {
+  <div class="todoPost-panel" style="min-width: 350px;">
+    <strong>Create New User</strong>
+    <div class="todoPost-item">
+      <label>Name:</label>
+      <input type="text" [(ngModel)]="newUserName" placeholder="Full name" />
+      <br /><br />
+      <label>Email:</label>
+      <input type="text" [(ngModel)]="newUserEmail" placeholder="Email" />
+      <br /><br />
+      <div class="button-group">
+        <button class="yellow-btn" (click)="addUser()">Save</button>
+        <button class="gray-btn" (click)="toggleAddUser()">Cancel</button>
+      </div>
+    </div>
+  </div>
+  }
+</div>

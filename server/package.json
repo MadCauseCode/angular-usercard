@@ -1,0 +1,17 @@
+{
+  "name": "angular-project-server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Oran Gal",
+  "license": "ISC",
+  "description": "This will be the server used in my angular project, used alongside my userDB database",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "mongoose": "^8.16.5",
+    "router": "^2.2.0"
+  }
+}
